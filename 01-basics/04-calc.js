@@ -3,15 +3,19 @@
  */
 
 const geo = require("./modules/geometry");
+const num = require("./modules/num");
 
-// console.log("geo", geo);
+// console.log("num", num);
 
 let radius = 4;
+let rounding = 2;
+
+// let preciseRound = num.roundWithPrecision(radius, rounding);
+// console.log(preciseRound);
 
 let area = geo.area(radius);
-let approxArea = Math.round(area * 10) / 10;
 console.log("the area is:", area);
-console.log("the approx. area is:", approxArea);
-
-let circumference = geo.circumference(radius);
-console.log("the circumference is:", circumference);
+let approxArea = num.roundWithPrecision(area, rounding);
+console.log("approx. area is:", approxArea);
+// let approxArea = Math.round(area * 10) / 10;
+// console.log("the approx. area is:", approxArea);
