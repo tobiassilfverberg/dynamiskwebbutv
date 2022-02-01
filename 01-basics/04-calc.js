@@ -8,7 +8,7 @@ const num = require("./modules/num");
 // console.log("num", num);
 
 let radius = 4;
-let rounding = 2;
+let rounding = 3;
 
 // let preciseRound = num.roundWithPrecision(radius, rounding);
 // console.log(preciseRound);
