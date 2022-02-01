@@ -40,3 +40,15 @@ fs.readdir(".")
   .catch((e) => {
     console.error(e);
   });
+
+/**
+ * readFile using promise
+ */
+fs.readFile("./data/lorem.txt")
+  .then((data) => {
+    console.log("The content in this file is:");
+    console.log(data.toString());
+  })
+  .catch((e) => {
+    console.error(e);
+  });
