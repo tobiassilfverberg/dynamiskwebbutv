@@ -2,6 +2,9 @@
  * Globals
  */
 
+// Single line comment = shift + CMD + 7
+/* Multi line comment =  shift + option + A */
+
 console.log("Hello world");
 
 /* 
