@@ -44,10 +44,10 @@ fs.readdir(".")
 /**
  * readFile using promise
  */
-fs.readFile("./data/lorem.txt")
+fs.readFile("./data/lorem.txt", "utf-8")
   .then((data) => {
     console.log("The content in this file is:");
-    console.log(data.toString());
+    console.log(data);
   })
   .catch((e) => {
     console.error(e);
