@@ -21,14 +21,19 @@ app.get('/nom', (req, res) => {
     res.send("Cupcake ipsum dolor sit amet. Liquorice gingerbread powder gummies pudding cupcake fruitcake marshmallow chupa chups. Biscuit cake bonbon jelly beans apple pie chocolate bar soufflé.");
 });
 
+// respond to GET request for '/index'
+app.get('/index', (req, res) => {
+    res.sendFile(__dirname + '/pages/index.html');
+});
+
 // Respond to GET request for '/about'
 app.get('/about', (req, res) => {
-    console.log(req.method, req.url);
-    res.set('Content-type', 'text/html');
+    res.sendFile(__dirname + '/pages/about.html');
+});
 
-    res.write('<h1>About</h1>');
-    res.write('<p>This is the about page</p>');
-    res.end();
+// respond to GET request for '/contact'
+app.get('/contact', (req, res) => {
+    res.sendFile(__dirname + '/pages/contact.html');
 });
 
 // Respond to GET request for `/api/nom`
