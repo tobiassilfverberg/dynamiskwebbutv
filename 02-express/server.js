@@ -3,6 +3,7 @@
  */
 
 const express = require('express');
+const path = require('path');
 const app = express();
 
 // Respond to GET rquest for '/'
@@ -16,9 +17,7 @@ app.get('/', (req, res) => {
 
 // Respond to GET request for '/nom'
 app.get('/nom', (req, res) => {
-    console.log(req.method, req.url);
-
-    res.send("Cupcake ipsum dolor sit amet. Liquorice gingerbread powder gummies pudding cupcake fruitcake marshmallow chupa chups. Biscuit cake bonbon jelly beans apple pie chocolate bar soufflé.");
+    res.sendFile( path.join(__dirname + '/pages/nom.html'));
 });
 
 // respond to GET request for '/index'
