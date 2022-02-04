@@ -43,6 +43,11 @@ app.get('/now', (req, res) => {
 // Serve files from '/pages' if no other route matches
 app.use( express.static('pages') );
 
+// Let user know we're sorry
+app.use((req, res, next) => {
+    res.send("Sorry, we couldn't find that page");
+});
+
 // Start listening for incoming requests on port 3000 
 app.listen(3000, () => {
     console.log("Yay, server started at http://localhost:3000");
