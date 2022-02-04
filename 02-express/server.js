@@ -39,7 +39,7 @@ app.get('/now', (req, res) => {
 }); 
 
 // Serve files from '/pages' if no other route matches
-app.use( express.static('pages') );
+app.use( express.static('public') );
 
 // Let user know we're sorry
 app.use((req, res, next) => {
