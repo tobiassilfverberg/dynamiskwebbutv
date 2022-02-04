@@ -7,6 +7,12 @@ const oneliners = require('./data/oneliners.json');
 const path = require('path');
 const app = express();
 
+// Inject logic to all incoming requests
+app.use((req, res, next) => {
+    console.log(`Incoming ${req.method} request for ${req.url}`);
+    next();
+});
+
 // Respond to GET rquest for '/'
 app.get('/', (req, res) => {
     // req = information om den inkommande förfrågan
