@@ -5,6 +5,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const oneliners = require('./data/oneliners.json');
+const users = require('./data/users.json');
 
 const app = express();
 
@@ -16,11 +17,21 @@ app.use( morgan('dev') );
 
 // Respond to GET rquest for '/'
 app.get('/', (req, res) => {
-    // req = information om den inkommande förfrågan
-    // res = metoder för att skicka ett svar på förfrågan
-    // console.log(req.method, req.url);
+    res.render('index', {
+        title: 'Index', 
+        users
+    });
+});
 
-    res.render('index', {title: 'Index'});
+// Respond to get request for /users/:userId
+app.get('/users/:userId', (req, res) => {
+    // Somehow use req.params.userId to get the corresponding user from the users array,
+    // and send that user to a view (which displays that users information)
+    res.render('user', { 
+        users, 
+        user: req.params.userId, 
+        title: 'More info about user'
+    });
 });
 
 // Respond with current time

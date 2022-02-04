@@ -1,0 +1,11 @@
+<%- include('partials/header') %>
+    <h1>
+        <%= users[user].name.first %> <%= users[user].name.last %>
+    </h1>
+    <h3>More info about this user can be foound below</h3>
+
+    <img src="<%= users[user].picture.large %>" alt="picture of this user">
+
+    <p>This user has email: <%= users[user].email %></p>
+
+<%- include('partials/footer') %>
