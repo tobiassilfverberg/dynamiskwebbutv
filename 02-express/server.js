@@ -5,13 +5,11 @@
 const express = require('express');
 const morgan = require('morgan');
 const oneliners = require('./data/oneliners.json');
+
 const app = express();
 
-// // Inject logic to all incoming requests
-// app.use((req, res, next) => {
-//     console.log(`Incoming ${req.method} request for ${req.url}`);
-//     next();
-// });
+// Tell express to use ejs as it's view engine
+app.set('view engine', 'ejs');
 
 // log stuff with morgan
 app.use( morgan('dev') );
