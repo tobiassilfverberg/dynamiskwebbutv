@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
     // res = metoder för att skicka ett svar på förfrågan
     // console.log(req.method, req.url);
 
-    res.send("Hello from root");
+    res.render('index');
 });
 
 // Respond with current time
@@ -35,7 +35,7 @@ app.get('/now', (req, res) => {
     const i = Math.floor(Math.random() * oneliners.length);
     const oneliner = oneliners[i];
     // 3. Respond with the item (`res.send(item)`) 
-    res.send(oneliner);
+    res.render('jokes', { oneliner });
 }); 
 
 // Serve files from '/pages' if no other route matches
