@@ -1,24 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const pokemoncards_controller = require("../controllers/pokemoncards_controller");
+const pokemonCards = require("../models/pokemonCards");
 
-router.get("/", (req, res) => {
-  res.send("GET not implemented");
-});
+router.get("/", pokemoncards_controller.read);
 
-router.get("/:id", (req, res) => {
-  res.send(`GET (${req.params.id}) not yet implemented`);
-});
+router.get("/:id", pokemoncards_controller.read);
 
-router.post("/", (req, res) => {
-  res.send("POST not yet implemented");
-});
+router.post("/", pokemoncards_controller.create);
 
-router.put("/:id", (req, res) => {
-  res.send(`PUT (${req.params.id}) not yet implemented`);
-});
+router.put("/:id", pokemoncards_controller.update);
 
-router.delete("/:id", (req, res) => {
-  res.send(`DELETE (${req.params.id}) not yet implemented`);
-});
+router.delete("/:id", pokemoncards_controller.remove);
 
 module.exports = router;
