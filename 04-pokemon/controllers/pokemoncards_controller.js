@@ -20,15 +20,15 @@ const create = async (req, res) => {
 };
 
 // Delete - ta bort ett kort i databasen
-const remove = async (req, res) => {
+const destroy = async (req, res) => {
   try {
     let card = await pokemonCards
       .where({ id: req.params.id })
       .fetch({ require: true });
 
-    card.destroy();
+    card = await card.destroy();
 
-    return res.status(201).send({
+    return res.status(200).send({
       success: true,
       data: {
         card,
@@ -105,5 +105,5 @@ module.exports = {
   read,
   create,
   update,
-  remove,
+  destroy,
 };

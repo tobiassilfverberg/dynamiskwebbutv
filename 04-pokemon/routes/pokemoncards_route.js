@@ -11,6 +11,6 @@ router.post("/", pokemoncards_controller.create);
 
 router.put("/:id", pokemoncards_controller.update);
 
-router.delete("/:id", pokemoncards_controller.remove);
+router.delete("/:id", pokemoncards_controller.destroy);
 
 module.exports = router;
