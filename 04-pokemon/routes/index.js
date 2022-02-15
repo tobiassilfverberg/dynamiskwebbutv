@@ -7,4 +7,8 @@ router.get("/", (req, res) => {
 
 router.use("/pokemoncards", require("./pokemoncards_route"));
 
+router.use("/pokemonfriends", require("./pokemoncards_route"));
+
+router.use("/pokemonbattles", require("./pokemoncards_route"));
+
 module.exports = router;
