@@ -5,6 +5,8 @@ router.get("/", (req, res) => {
   res.send("OK!");
 });
 
+router.use("/users", require("./Users_route"));
+
 router.use("/pokemoncards", require("./pokemoncards_route"));
 
 router.use("/pokemonfriends", require("./pokemonfriends_route"));
