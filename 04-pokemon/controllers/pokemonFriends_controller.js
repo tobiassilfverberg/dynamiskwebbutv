@@ -1,4 +1,4 @@
-const PokemonFriends = require("../models/PokemonFriends");
+const PokemonFriends = require("../models/pokemonFriends");
 //const modules = require('../models');
 
 /*
@@ -104,9 +104,32 @@ const destroy = async (req, res) => {
   }
 };
 
+const addCard = async (req, res) => {
+  try {
+    let friend = await PokemonFriends.where({ id: req.params.id }).fetch({
+      require: true,
+    });
+
+    friend = await friend.cards().attach(req.body); //set(req.body).save();
+
+    return res.status(200).send({
+      success: true,
+      data: {
+        friend,
+      },
+    });
+  } catch (err) {
+    return res.status(500).send({
+      success: false,
+      data: err.message,
+    });
+  }
+};
+
 module.exports = {
   create,
   read,
   update,
   destroy,
+  addCard,
 };

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const pokemonfriends_controller = require("../controllers/pokemonfriends_controller");
+const pokemonfriends_controller = require("../controllers/pokemonFriends_controller");
 
 // Implementera GET / READ -  Alla Pokemonkompis
 // curl -X GET http://localhost:3000/pokemonfriends/
@@ -21,5 +21,7 @@ router.put("/:id", pokemonfriends_controller.update);
 // Implementera DELETE / DELETE (DESTROY) - Radera en pokemonkompis
 // curl -X DELETE http://localhost:3000/pokemonfriends/1234
 router.delete("/:id", pokemonfriends_controller.destroy);
+
+router.post("/:id/addCard", pokemonfriends_controller.addCard);
 
 module.exports = router;
