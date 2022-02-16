@@ -1,24 +1,25 @@
 const express = require("express");
 const router = express.Router();
+const pokemonfriends_controller = require("../controllers/pokemonfriends_controller");
 
-router.get("/", (req, res) => {
-  res.send("GET not implemented");
-});
+// Implementera GET / READ -  Alla Pokemonkompis
+// curl -X GET http://localhost:3000/pokemonfriends/
+router.get("/", pokemonfriends_controller.read);
 
-router.get("/:id", (req, res) => {
-  res.send(`GET (${req.params.id}) not yet implemented`);
-});
+// Implementera GET / READ -  En Pokemonkompis
+// curl -X GET http://localhost:3000/pokemonfriends/1234
+router.get("/:id", pokemonfriends_controller.read);
 
-router.post("/", (req, res) => {
-  res.send("POST not yet implemented");
-});
+// Implementera POST / CREATE - Skapa en pokemonkompis
+// curl -X POST http://localhost:3000/pokemonfriends/1234
+router.post("/", pokemonfriends_controller.create);
 
-router.put("/:id", (req, res) => {
-  res.send(`PUT (${req.params.id}) not yet implemented`);
-});
+// Implementera PUT / UPDATE - Uppdatera en pokemonkompis
+// curl -X PUT http://localhost:3000/pokemonfriends/1234
+router.put("/:id", pokemonfriends_controller.update);
 
-router.delete("/:id", (req, res) => {
-  res.send(`DELETE (${req.params.id}) not yet implemented`);
-});
+// Implementera DELETE / DELETE (DESTROY) - Radera en pokemonkompis
+// curl -X DELETE http://localhost:3000/pokemonfriends/1234
+router.delete("/:id", pokemonfriends_controller.destroy);
 
 module.exports = router;

@@ -1,7 +1,22 @@
 const bookshelf = require("./bookshelf");
+const PokemonCards = require("./pokemonCards");
 
-const pokemonCards = bookshelf.Model.extend({
+const PokemonFriends = bookshelf.Model.extend({
   tableName: "pokemonFriends",
+  cards() {
+    return this.belongsToMany(
+      PokemonCards,
+      "PokemonFriendCards",
+      "friend",
+      "card"
+    );
+  },
 });
 
-module.exports = pokemonCards;
+/*
+const PokemonFriends = bookshelf.model('PokemonFriends', {
+    tableName: "PokemonFriends"
+});
+*/
+
+module.exports = PokemonFriends;
