@@ -1,4 +1,5 @@
 const authors = require("../models/Authors");
+const log = require("../logging");
 
 // Create - skapa en författare i databasen
 const create = async (req, res) => {
@@ -8,7 +9,7 @@ const create = async (req, res) => {
     }
 
     let author = authors(req.body).save();
-
+    log.info("Här kommer info");
     return res.status(201).send({
       success: true,
       data: {

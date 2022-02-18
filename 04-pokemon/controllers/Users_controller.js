@@ -1,4 +1,5 @@
 const Users = require("../models/Users");
+const log = require("../logging");
 
 /*
  * Create - skapa ett kort i databasen
@@ -28,11 +29,13 @@ const read = async (req, res) => {
   try {
     let user;
     if (req.params.id) {
+      log.info("Här kommer din användare");
       user = await Users.where({ id: req.params.id }).fetch({
         require: false,
         withRelated: ["reservations"],
       });
     } else {
+      log.info("Här kommer alla dina användare");
       user = await Users.fetchAll({
         withRelated: ["reservations"],
       });
