@@ -1,4 +1,5 @@
 const PokemonCards = require("../models/PokemonCards");
+const log = require("debug")("pokemon:controller:pokemoncards");
 //const modules = require('../models');
 
 /*
