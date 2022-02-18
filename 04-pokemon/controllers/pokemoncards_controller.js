@@ -16,6 +16,7 @@ const create = async (req, res) => {
       },
     });
   } catch (err) {
+    log("Create failed: %s", err.message);
     return res.status(500).send({
       success: false,
       data: err.message,
@@ -54,6 +55,7 @@ const read = async (req, res) => {
       },
     });
   } catch (err) {
+    log("Create failed: %s", err.message);
     return res.status(500).send({
       success: false,
       data: err.message,
@@ -79,6 +81,7 @@ const update = async (req, res) => {
       },
     });
   } catch (err) {
+    log("Create failed: %s", err.message);
     return res.status(500).send({
       success: false,
       data: err.message,
@@ -100,6 +103,7 @@ const destroy = async (req, res) => {
       },
     });
   } catch (err) {
+    log("Create failed: %s", err.message);
     return res.status(500).send({
       success: false,
       data: err.message,
