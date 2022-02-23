@@ -3,8 +3,8 @@
  */
 
 const debug = require("debug")("books:author_controller");
-const models = require("../models");
 const { matchedData, validationResult } = require("express-validator");
+const models = require("../models");
 
 /**
  * Get all resources
@@ -46,20 +46,14 @@ const show = async (req, res) => {
  * POST /
  */
 const store = async (req, res) => {
-  // Check for validation errors
+  // check for any validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).send({ status: "fail", data: errors.array() });
   }
 
-  // Get only validated data
+  // get only the validated data from the request
   const validData = matchedData(req);
-
-  //   const data = {
-  //     first_name: req.body.first_name,
-  //     last_name: req.body.last_name,
-  //     birthyear: req.body.birthyear,
-  //   };
 
   try {
     const author = await new models.Author(validData).save();
@@ -85,11 +79,48 @@ const store = async (req, res) => {
  *
  * POST /:authorId
  */
-const update = (req, res) => {
-  res.status(405).send({
-    status: "fail",
-    message: "Method Not Allowed.",
+const update = async (req, res) => {
+  const authorId = req.params.authorId;
+
+  // make sure author exists
+  const author = await new models.Author({ id: authorId }).fetch({
+    require: false,
   });
+  if (!author) {
+    debug("Author to update was not found. %o", { id: authorId });
+    res.status(404).send({
+      status: "fail",
+      data: "Author Not Found",
+    });
+    return;
+  }
+
+  // check for any validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).send({ status: "fail", data: errors.array() });
+  }
+
+  // get only the validated data from the request
+  const validData = matchedData(req);
+
+  try {
+    const updatedAuthor = await author.save(validData);
+    debug("Updated author successfully: %O", updatedAuthor);
+
+    res.send({
+      status: "success",
+      data: {
+        author,
+      },
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "error",
+      message: "Exception thrown in database when updating a new author.",
+    });
+    throw error;
+  }
 };
 
 /**
