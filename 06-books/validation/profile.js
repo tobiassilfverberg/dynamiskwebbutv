@@ -11,7 +11,21 @@ const updateRules = [
   body("last_name").optional().isString().isLength({ min: 2 }),
 ];
 
-const addBookRules = [body("book_id").exists().isInt({ min: 1 })];
+const addBookRules = [
+  body("book_id")
+    .exists()
+    .bail()
+    .custom(async (value) => {
+      const book = await new models.Author({ id: value }).fetch({
+        require: false,
+      });
+      if (!book) {
+        return Promise.reject(`Book with ID ${value} does not exist.`);
+      }
+
+      return Promise.resolve();
+    }),
+];
 
 module.exports = {
   updateRules,

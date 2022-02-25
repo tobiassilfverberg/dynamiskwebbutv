@@ -9,6 +9,7 @@ const createRules = [
   body("pages").exists().isInt().isLength({ min: 1 }),
   body("author_id")
     .exists()
+    .bail()
     .custom(async (value) => {
       const author = await new models.Author({ id: value }).fetch({
         require: false,
