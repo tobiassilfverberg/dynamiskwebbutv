@@ -2,9 +2,9 @@
  * Profile Controller
  */
 
+const bcrypt = require("bcrypt");
 const debug = require("debug")("books:profile_controller");
 const { matchedData, validationResult } = require("express-validator");
-const models = require("../models");
 
 /**
  * Get authenticated users profile
@@ -34,6 +34,17 @@ const updateProfile = async (req, res) => {
 
   // get only the validated data from the request
   const validData = matchedData(req);
+  if (validData.password) {
+    try {
+      validData.password = await bcrypt.hash(validData.password, 10);
+    } catch (error) {
+      res.status(500).send({
+        status: "error",
+        message: "Exception thrown in database when hashing the password.",
+      });
+      throw error;
+    }
+  }
 
   try {
     const updatedUser = await req.user.save(validData);
@@ -77,9 +88,6 @@ const getBooks = async (req, res) => {
 
 /**
  * Add a book to the authenticated user
- *
- * @todo 1. Validate that the book actually exists
- * @todo 2. Validate that the book they are trying to add isn't already in the list
  *
  * POST /books
  * {

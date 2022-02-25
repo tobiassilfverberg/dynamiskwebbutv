@@ -7,7 +7,7 @@ const profileValidationRules = require("../validation/profile");
 router.get("/", profileController.getProfile);
 
 /* Update authenticated user's profile - PUT */
-router.get(
+router.put(
   "/",
   profileValidationRules.updateRules,
   profileController.updateProfile

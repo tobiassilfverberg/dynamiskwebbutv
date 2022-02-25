@@ -2,6 +2,7 @@
  * User Validation Rules
  */
 const { body } = require("express-validator");
+const models = require("../models");
 
 const createRules = [
   body("username")
