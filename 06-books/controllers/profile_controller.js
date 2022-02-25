@@ -61,16 +61,16 @@ const updateProfile = async (req, res) => {
  */
 const getBooks = async (req, res) => {
   // lazy load books
-  // wait req.user.load(['books'])
+  await req.user.load(["books"]);
 
-  const user = await new models.User({ id: req.user.id }).fetch({
-    withRelated: "books",
-  });
+  // const user = await new models.User({ id: req.user.id }).fetch({
+  //   withRelated: "books",
+  // });
 
   res.send({
     status: "success",
     data: {
-      user,
+      books: req.user.related("books"),
     },
   });
 };
@@ -95,6 +95,29 @@ const addBook = async (req, res) => {
 
   // get only the validated data from the request
   const validData = matchedData(req);
+
+  // lazy-load book relationship
+  await req.user.load("books");
+
+  // get the users books
+  const books = req.user.related("books");
+
+  // check if book is already in users list
+  /* let existing_book = null;
+  books.forEach((book) => {
+    if (book.id == validData.book_id) {
+      existing_book = book;
+    }
+  }); */
+
+  const existing_book = books.find((book) => book.id == validData.book_id);
+
+  if (existing_book) {
+    return res.send({
+      status: "fail",
+      data: "Book already exists.",
+    });
+  }
 
   try {
     const result = await req.user.books().attach(validData.book_id);
