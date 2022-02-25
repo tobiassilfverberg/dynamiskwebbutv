@@ -26,10 +26,32 @@ const getProfile = async (req, res) => {
  * PUT /
  */
 const updateProfile = async (req, res) => {
-  res.status(405).send({
-    status: "error",
-    message: "This is a workshop",
-  });
+  // check for any validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).send({ status: "fail", data: errors.array() });
+  }
+
+  // get only the validated data from the request
+  const validData = matchedData(req);
+
+  try {
+    const updatedUser = await req.user.save(validData);
+    debug("Updated user successfully: %O", updatedUser);
+
+    res.send({
+      status: "success",
+      data: {
+        user: updatedUser,
+      },
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "error",
+      message: "Exception thrown in database when updating a new user.",
+    });
+    throw error;
+  }
 };
 
 /**
@@ -53,8 +75,53 @@ const getBooks = async (req, res) => {
   });
 };
 
+/**
+ * Add a book to the authenticated user
+ *
+ * @todo 1. Validate that the book actually exists
+ * @todo 2. Validate that the book they are trying to add isn't already in the list
+ *
+ * POST /books
+ * {
+ *   book_id: 5
+ * }
+ */
+const addBook = async (req, res) => {
+  // check for any validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).send({ status: "fail", data: errors.array() });
+  }
+
+  // get only the validated data from the request
+  const validData = matchedData(req);
+
+  try {
+    const result = await req.user.books().attach(validData.book_id);
+    // ta bort specifik bok
+    //const result = await req.user.books().detach(validData.book_id);
+    // ta bort alla böcker
+    // const result = await req.user.books().detach();
+    debug("Added book to user successfully: %O", result);
+
+    res.send({
+      status: "success",
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "error",
+      message: "Exception thrown in database when adding a book to a user.",
+    });
+    throw error;
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
   getBooks,
+  addBook,
 };
