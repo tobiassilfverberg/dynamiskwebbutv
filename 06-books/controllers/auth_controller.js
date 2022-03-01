@@ -8,9 +8,22 @@ const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
 
 /**
+ * Login a user, sign a JWT token and return it
+ *
+ * POST /login
+ * {
+ *  "username": "",
+ *  "password": ""
+ * }
+ */
+const login = async (req, res) => {
+  // check if a user with the username exists
+};
+
+/**
  * Register a new user
  *
- * POST /
+ * POST /regiser
  */
 const register = async (req, res) => {
   // check for any validation errors
@@ -57,4 +70,5 @@ const register = async (req, res) => {
 
 module.exports = {
   register,
+  login,
 };
