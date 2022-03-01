@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const debug = require("debug")("books:profile_controller");
 const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
+const User = require("../models/User");
 
 /**
  * Get authenticated users profile
@@ -13,12 +14,20 @@ const models = require("../models");
  * GET /
  */
 const getProfile = async (req, res) => {
-  res.send({
-    status: "success",
-    data: {
-      user: req.user,
-    },
-  });
+  try {
+    const user = await models.User.fetchById(req.user.user_id);
+
+    res.send({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch {
+    res.status(404).send({
+      status: "no info for u",
+    });
+  }
 };
 
 /**
@@ -76,7 +85,8 @@ const updateProfile = async (req, res) => {
  */
 const getBooks = async (req, res) => {
   // lazy load books
-  await req.user.load(["books"]);
+  const user = await models.User.fetchById(req.user.user_id);
+  // await req.user.load(["books"]);
 
   // const user = await new models.User({ id: req.user.id }).fetch({
   //   withRelated: "books",
@@ -85,7 +95,7 @@ const getBooks = async (req, res) => {
   res.send({
     status: "success",
     data: {
-      books: req.user.related("books"),
+      books: user.related("books"),
     },
   });
 };

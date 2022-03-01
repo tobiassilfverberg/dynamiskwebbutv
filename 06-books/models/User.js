@@ -33,6 +33,14 @@ module.exports = (bookshelf) => {
         // all is well
         return user;
       },
+
+      async fetchById(id) {
+        const user = await new this({ id }).fetch({ require: false });
+        if (!user) {
+          return false;
+        }
+        return user;
+      },
     }
   );
 };
