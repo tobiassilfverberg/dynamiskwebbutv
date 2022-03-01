@@ -5,6 +5,7 @@
 const bcrypt = require("bcrypt");
 const debug = require("debug")("books:profile_controller");
 const { matchedData, validationResult } = require("express-validator");
+const models = require("../models");
 
 /**
  * Get authenticated users profile
@@ -36,7 +37,10 @@ const updateProfile = async (req, res) => {
   const validData = matchedData(req);
   if (validData.password) {
     try {
-      validData.password = await bcrypt.hash(validData.password, 10);
+      validData.password = await bcrypt.hash(
+        validData.password,
+        models.User.hashSaltRounds
+      );
     } catch (error) {
       res.status(500).send({
         status: "error",
