@@ -35,7 +35,14 @@ const login = async (req, res) => {
   };
 
   // sign payload and get access token
-  const access_token = jwt.sign(payload, "secretkey");
+  const access_token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_LIFETIME,
+  });
+
+  // sign payload and get refresh token
+  const refresh_token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_LIFETIME,
+  });
 
   // respond with the access-token
   return res.send({
@@ -43,8 +50,51 @@ const login = async (req, res) => {
     data: {
       // access-token here
       access_token,
+      refresh_token,
     },
   });
+};
+
+/**
+ * Validate refresh token and issue a new JWT token and return it
+ *
+ * POST /refresh
+ * {
+ *  "token": "",
+ * }
+ */
+const refresh = (req, res) => {
+  // validate the refresh token (check signature and expiry date)
+  try {
+    // verify token using the refresh token secret
+    const payload = jwt.verify(
+      req.body.token,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    // construct payload
+    // remove `iat` and `exp` from refresh token payload
+    delete payload.iat;
+    delete payload.exp;
+
+    // sign payload and get access token
+    const access_token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: process.env.ACCESS_TOKEN_LIFETIME,
+    });
+
+    // send the access token to the client
+    return res.send({
+      status: "success",
+      data: {
+        access_token,
+      },
+    });
+  } catch (error) {
+    return res.status(401).send({
+      status: "fail",
+      data: "Invalid token",
+    });
+  }
 };
 
 /**
@@ -99,6 +149,7 @@ const register = async (req, res) => {
 };
 
 module.exports = {
-  register,
   login,
+  register,
+  refresh,
 };
