@@ -36,50 +36,46 @@ const get = async (req, res) => {
 
 // Upload new photo
 const upload = async (req, res) => {
-  {
-    // check for any validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).send({ status: "fail", data: errors.array() });
-    }
+  // check for any validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).send({ status: "fail", data: errors.array() });
+  }
 
-    // get only the validated data from the request
-    const validData = matchedData(req);
+  // get only the validated data from the request
+  const validData = matchedData(req);
 
-    // lazy-load photo relationship
-    await req.user.load("photos");
+  // lazy-load photo relationship
+  await req.user.load("photos");
 
-    // get the users photos
-    const photos = req.user.related("photos");
+  // get the users photos
+  const photos = req.user.related("photos");
 
-    const existing_photo = photos.find(
-      (photo) => photo.id == validData.photo_id
-    );
+  const existing_photo = photos.find((photo) => photo.id == validData.photo_id);
 
-    if (existing_photo) {
-      return res.send({
-        status: "fail",
-        data: "Photo already exists on user.",
-      });
-    }
+  if (existing_photo) {
+    return res.send({
+      status: "fail",
+      data: "Photo already exists on user.",
+    });
+  }
 
-    try {
-      const result = await req.user.photos().attach(validData.photo_id);
-      debug("Added photo to user successfully: %O", result);
+  try {
+    const result = await req.user.photos().attach(validData.photo_id);
+    debug("Added photo to user successfully: %O", result);
 
-      res.send({
-        status: "success",
-        data: {
-          result,
-        },
-      });
-    } catch (error) {
-      res.status(500).send({
-        status: "error",
-        message: "Exception thrown in database when adding a book to a user.",
-      });
-      throw error;
-    }
+    res.send({
+      status: "success",
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "error",
+      message: "Exception thrown in database when adding a book to a user.",
+    });
+    throw error;
   }
 };
 
