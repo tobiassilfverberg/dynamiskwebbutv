@@ -80,7 +80,7 @@ const validateJwtToken = (req, res, next) => {
 
   // verify token (and extract payload)
   try {
-    req.user = jwt.verify(token, "secretkey");
+    req.user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
   } catch (error) {
     return res.status(401).send({
       status: "fail",
