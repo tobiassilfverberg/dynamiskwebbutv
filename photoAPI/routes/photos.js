@@ -18,7 +18,7 @@ router.get("/:photoId", photosController.get);
 router.post("/", validatePhoto.uploadRules, photosController.upload);
 
 // PUT a photo (update a photo)
-router.put("/:photoId", photosController.update);
+router.put("/:photoId", validatePhoto.updateRules, photosController.update);
 
 // DELETE a photo
 router.delete("/:photoId", photosController.destroy);

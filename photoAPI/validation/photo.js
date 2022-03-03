@@ -9,4 +9,10 @@ const uploadRules = [
   body("comment").optional().isString().isLength({ min: 3 }),
 ];
 
-module.exports = { uploadRules };
+const updateRules = [
+  body("title").optional().isString().isLength({ min: 3 }),
+  body("url").optional().isString().isURL(),
+  body("comment").optional().isString().isLength({ min: 3 }),
+];
+
+module.exports = { uploadRules, updateRules };
