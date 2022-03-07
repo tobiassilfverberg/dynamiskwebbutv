@@ -149,10 +149,16 @@ const register = async (req, res) => {
     const user = await new models.User(validData).save();
     debug("Created new user successfully: %O", user);
 
+    const email = user.get("email");
+    const first_name = user.get("first_name");
+    const last_name = user.get("last_name");
+
     res.send({
       status: "success",
       data: {
-        user,
+        email,
+        first_name,
+        last_name,
       },
     });
   } catch (error) {
