@@ -1,16 +1,12 @@
 {
-  "name": "photoapi",
-  "version": "1.0.0",
-  "description": "<h1> Assignment 1 - Photo API",
-  "main": "index.js",
+  "name": "fed21-nodejs-boilerplate",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "cross-env DEBUG=photoAPI:* nodemon ./bin/www",
-    "debug": "cross-env DEBUG=photoAPI:* nodemon --inspect ./bin/www"
+    "dev": "cross-env DEBUG=books:* nodemon ./bin/www",
+    "debug": "cross-env DEBUG=books:* nodemon --inspect ./bin/www"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "bookshelf": "^1.2.0",

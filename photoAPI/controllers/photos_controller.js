@@ -2,40 +2,66 @@
  * Photos controller
  */
 
-const debug = require("debug")("photoAPI:auth_controller");
+const debug = require("debug")("photoAPI:photos_controller");
 const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
+const validateJwt = require("../middlewares/auth");
 
-// Show all books related to user
+// Show all photos related to user
 const show = async (req, res) => {
-  const user = await new models.User({ user: req.user }).fetch({
-    withRelated: "photos",
-  });
+  // validate user
+  const validatedUser = validateJwt.validateJwtToken(req.headers.authorization);
+  const user = await models.User.fetchById(validatedUser.user_id);
 
-  res.send({
-    status: "success",
-    data: {
-      books: user.related("photos"),
-    },
-  });
+  try {
+    const photos = await new models.Photo(user)
+      .where("user_id", user.id)
+      .fetchAll();
+
+    res.send({
+      status: "success",
+      data: {
+        photos, // varför printar den data{photos{[]}} ?
+      },
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "error",
+      message: "Couldn't get photos",
+    });
+  }
 };
 
 // Show book with id
 const get = async (req, res) => {
-  const photo = await new models.Photo({ id: req.params.photoId }).fetch({
-    withRelated: ["users"],
-  });
+  // validate user
+  const validatedUser = validateJwt.validateJwtToken(req.headers.authorization);
+  const user = await models.User.fetchById(validatedUser.user_id);
 
-  res.send({
-    status: "success",
-    data: {
-      photo,
-    },
-  });
+  try {
+    const photo = await new models.Photo.getPhoto()
+      .where("id", req.params)
+      .fetch();
+
+    return res.send({
+      status: "success",
+      data: {
+        photo,
+      },
+    });
+  } catch (error) {
+    return res.status(500).send({
+      status: "error",
+      message: "Exception thrown in database when finding photo",
+    });
+  }
 };
 
 // Upload new photo
 const upload = async (req, res) => {
+  // get validated user
+  // const user = validateJwt.validateJwtToken(req.headers.authorization);
+
   // check for any validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -45,35 +71,20 @@ const upload = async (req, res) => {
   // get only the validated data from the request
   const validData = matchedData(req);
 
-  // lazy-load photo relationship
-  await req.user.load("photos");
-
-  // get the users photos
-  const photos = req.user.related("photos");
-
-  const existing_photo = photos.find((photo) => photo.id == validData.photo_id);
-
-  if (existing_photo) {
-    return res.send({
-      status: "fail",
-      data: "Photo already exists on user.",
-    });
-  }
-
   try {
-    const result = await req.user.photos().attach(validData.photo_id);
+    const result = await new models.Photo(validData).save();
     debug("Added photo to user successfully: %O", result);
 
     res.send({
       status: "success",
       data: {
-        result,
+        result, // varför printar den data {result{}} och user_id = null?
       },
     });
   } catch (error) {
     res.status(500).send({
       status: "error",
-      message: "Exception thrown in database when adding a book to a user.",
+      message: "Exception thrown in database when adding a photo to a user.",
     });
     throw error;
   }
@@ -142,7 +153,7 @@ const destroy = async (req, res) => {
   }
 
   // delete photo
-  photo.destroy();
+  delete photo;
 };
 
 module.exports = {

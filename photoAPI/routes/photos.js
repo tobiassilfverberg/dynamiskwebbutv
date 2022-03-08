@@ -1,13 +1,13 @@
 /**
  * Requests for photos
  */
-const validateJwt = require("../middlewares/auth");
 const express = require("express");
-const router = express.Router();
 const photosController = require("../controllers/photos_controller");
+const router = express.Router();
+const validateJwt = require("../middlewares/auth");
 const validatePhoto = require("../validation/photo");
 
-router.use(validateJwt.validateJwtToken);
+// router.use(validateJwt.validateJwtToken);
 // GET all photos (show all)
 router.get("/", photosController.show);
 

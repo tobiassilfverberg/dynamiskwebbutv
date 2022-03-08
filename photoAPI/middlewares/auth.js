@@ -2,7 +2,6 @@
  * Authentication Middleware
  */
 
-const bcrypt = require("bcrypt");
 const debug = require("debug")("books:auth");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
@@ -10,9 +9,9 @@ const { User } = require("../models");
 /**
  * Validate JWT Token
  */
-const validateJwtToken = (req, res, next) => {
+const validateJwtToken = (req, res) => {
   // make sure authorization header exists, otherwise bail
-  if (!req.headers.authorization) {
+  if (!req) {
     debug("Autorization header missing");
 
     return res.status(401).send({
@@ -22,7 +21,7 @@ const validateJwtToken = (req, res, next) => {
   }
 
   // split authorization header into "authSchema token"
-  const [authSchema, token] = req.headers.authorization.split(" ");
+  const [authSchema, token] = req.split(" ");
   if (authSchema.toLowerCase() !== "bearer") {
     return res.status(401).send({
       status: "fail",
@@ -32,16 +31,14 @@ const validateJwtToken = (req, res, next) => {
 
   // verify token (and extract payload)
   try {
-    req.user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    return user;
   } catch (error) {
     return res.status(401).send({
       status: "fail",
-      data: "Authorization failed",
+      data: error,
     });
   }
-
-  // pass request along
-  next();
 };
 
 module.exports = {
