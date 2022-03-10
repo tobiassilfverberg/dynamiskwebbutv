@@ -149,7 +149,9 @@ const update = async (req, res) => {
 };
 
 // Upload photo to album
-const uploadPhoto = async (req, res) => {};
+const uploadPhoto = async (req, res) => {
+  
+};
 
 // Upload multiple photos to album VG
 const uploadManyPhotos = async (req, res) => {};

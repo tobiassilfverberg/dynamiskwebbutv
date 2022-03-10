@@ -5,7 +5,7 @@ const express = require("express");
 const router = express.Router();
 const albumController = require("../controllers/album_controller");
 const validateJwt = require("../middlewares/auth");
-const validateAlbum = require("../validation/album"); 
+const validateAlbum = require("../validation/album");
 
 router.use(validateJwt.validateJwtToken);
 
@@ -22,15 +22,19 @@ router.post("/", validateAlbum.uploadRules, albumController.upload);
 router.put("/:albumId", validateAlbum.updateRules, albumController.update);
 
 // POST photo to an album (add photo)
-router.post("/:albumId/photos", albumController.uploadPhoto);
+router.post(
+  "/:albumId/photos",
+  validateAlbum.addPhoto,
+  albumController.uploadPhoto
+);
 
-// POST multiple photos to album (add many photos)
+// POST multiple photos to album (add many photos) VG
 router.post("/:albumId/photos", albumController.uploadManyPhotos);
 
-// DELETE photo from album
+// DELETE photo from album VG
 router.delete("/:albumId/photos/:photoId", albumController.destroyPhoto);
 
-// DELETE an album
+// DELETE an album VG
 router.delete("/:albumId", albumController.destroy);
 
 module.exports = router;
