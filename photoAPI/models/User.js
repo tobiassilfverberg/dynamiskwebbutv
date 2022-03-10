@@ -37,8 +37,8 @@ module.exports = (bookshelf) => {
         return user;
       },
 
-      async fetchById(id) {
-        const user = await new this({ id }).fetch({ require: false });
+      async fetchById(id, fetchOptions) {
+        const user = await new this({ id }).fetch(fetchOptions);
         if (!user) {
           return false;
         }
