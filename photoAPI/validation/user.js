@@ -24,9 +24,11 @@ const createUser = [
 ];
 
 const loginUser = [
-  
-]
+  body("email").exists().isEmail(),
+  body("password").exists().isString().isLength({ min: 6 }),
+];
 
 module.exports = {
   createUser,
+  loginUser,
 };
