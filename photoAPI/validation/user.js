@@ -7,7 +7,7 @@ const models = require("../models");
 const createUser = [
   body("email")
     .exists()
-    .isString()
+    .isEmail()
     .custom(async (value) => {
       const user = await new models.User({ email: value }).fetch({
         require: false,
@@ -22,6 +22,10 @@ const createUser = [
   body("first_name").exists().isString().isLength({ min: 3 }),
   body("last_name").exists().isString().isLength({ min: 3 }),
 ];
+
+const loginUser = [
+  
+]
 
 module.exports = {
   createUser,

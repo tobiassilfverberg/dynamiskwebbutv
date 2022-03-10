@@ -12,7 +12,7 @@ router.use("/photos", auth.validateJwtToken, require("./photos"));
 router.post("/register", userValidation.createUser, authController.register);
 
 // Login a user
-router.post("/login", authController.login);
+router.post("/login", userValidation.loginUser, authController.login);
 
 // Get new access token for user
 router.post("/refresh", authController.refresh);
