@@ -149,16 +149,12 @@ const register = async (req, res) => {
     const user = await new models.User(validData).save();
     debug("Created new user successfully: %O", user);
 
-    const email = user.get("email");
-    const first_name = user.get("first_name");
-    const last_name = user.get("last_name");
-
     res.send({
       status: "success",
       data: {
-        email,
-        first_name,
-        last_name,
+        email: user.get("email"),
+        first_name: user.get("first_name"),
+        last_name: user.get("last_name"),
       },
     });
   } catch (error) {
@@ -166,7 +162,6 @@ const register = async (req, res) => {
       status: "error",
       message: "Exception thrown in database when creating a new user.",
     });
-    throw error;
   }
 };
 

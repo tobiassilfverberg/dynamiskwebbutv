@@ -5,13 +5,13 @@
 const debug = require("debug")("photoAPI:photos_controller");
 const { matchedData, validationResult } = require("express-validator");
 const models = require("../models");
-const validateJwt = require("../middlewares/auth");
 
 // Show all photos related to user
 const show = async (req, res) => {
   // validate user
-  const validatedUser = validateJwt.validateJwtToken(req.headers.authorization);
-  const user = await models.User.fetchById(validatedUser.user_id);
+  const user = await models.User.fetchById(req.user.user_id, {
+    withRelated: ["photos"],
+  });
 
   try {
     const photos = await new models.Photo(user)
@@ -20,9 +20,7 @@ const show = async (req, res) => {
 
     res.send({
       status: "success",
-      data: {
-        photos, // varför printar den data{photos{[]}} ?
-      },
+      data: photos,
     });
   } catch (error) {
     res.status(500).send({
@@ -34,22 +32,24 @@ const show = async (req, res) => {
 
 // Show book with id
 const get = async (req, res) => {
-  // validate user
-  const validatedUser = validateJwt.validateJwtToken(req.headers.authorization);
-  const user = await models.User.fetchById(validatedUser.user_id);
-
   try {
-    const photo = await new models.Photo.getPhoto()
-      .where("id", req.params)
+    const photo = await new models.Photo()
+      .where("id", req.params.photoId)
       .fetch();
+
+    if (photo.get("user_id") !== req.user.user_id) {
+      return res.status(401).send({
+        status: "fail",
+        message: "You are not authorized to show this photo",
+      });
+    }
 
     return res.send({
       status: "success",
-      data: {
-        photo,
-      },
+      data: photo,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).send({
       status: "error",
       message: "Exception thrown in database when finding photo",
@@ -60,7 +60,9 @@ const get = async (req, res) => {
 // Upload new photo
 const upload = async (req, res) => {
   // get validated user
-  // const user = validateJwt.validateJwtToken(req.headers.authorization);
+  const user = await models.User.fetchById(req.user.user_id, {
+    withRelated: ["photos"],
+  });
 
   // check for any validation errors
   const errors = validationResult(req);
@@ -70,6 +72,7 @@ const upload = async (req, res) => {
 
   // get only the validated data from the request
   const validData = matchedData(req);
+  validData.user_id = user.user_id;
 
   try {
     const result = await new models.Photo(validData).save();
@@ -77,9 +80,7 @@ const upload = async (req, res) => {
 
     res.send({
       status: "success",
-      data: {
-        result, // varför printar den data {result{}} och user_id = null?
-      },
+      data: result,
     });
   } catch (error) {
     res.status(500).send({
@@ -92,12 +93,28 @@ const upload = async (req, res) => {
 
 // Update photo
 const update = async (req, res) => {
-  const photoId = req.params.photoId;
-
-  // make sure photo exists
-  const photo = await new models.Photo({ id: photoId }).fetch({
+  // find photo
+  const photo = await new models.Photo({ id: req.params.photoId }).fetch({
     require: false,
   });
+  console.log(photo);
+
+  // make sure this photo exists on user
+  const user = await models.User.fetchById(req.user.user_id, {
+    withRelated: ["photos"],
+  });
+
+  // deny if not
+  if (!photo.get("user_id") === user.id) {
+    debug("You don´t have access to this photo. %o", {
+      id: req.params.photoId,
+    });
+    return res.status(403).send({
+      status: "fail",
+      data: "Update failed. You don't have access to this photo",
+    });
+  }
+
   if (!photo) {
     debug("Photo to update was not found. %o", { id: photoId });
     res.status(404).send({
@@ -122,9 +139,7 @@ const update = async (req, res) => {
 
     res.send({
       status: "success",
-      data: {
-        photo,
-      },
+      data: updatedPhoto,
     });
   } catch (error) {
     res.status(500).send({
@@ -139,10 +154,16 @@ const update = async (req, res) => {
 const destroy = async (req, res) => {
   const photoId = req.params.photoId;
 
-  // make sure photo exists
-  const photo = await new models.Photo({ id: photoId }).fetch({
+  // get user
+  const user = await models.User.fetchById(req.user.user_id, {
+    withRelated: ["photos"],
+  });
+
+  // find photo
+  const photo = await new models.Photo({ id: req.params.photoId }).fetch({
     require: false,
   });
+
   if (!photo) {
     debug("Photo to delete was not found. %o", { id: photoId });
     res.status(404).send({
@@ -152,8 +173,29 @@ const destroy = async (req, res) => {
     return;
   }
 
-  // delete photo
-  delete photo;
+  if (!photo.get("user_id") === user.id) {
+    debug("You don´t have access to this photo. %o", {
+      id: req.params.photoId,
+    });
+    return res.status(403).send({
+      status: "fail",
+      data: "Update failed. You don't have access to this photo",
+    });
+  }
+
+  try {
+    const deletedPhoto = await photo.destroy();
+    debug("Photo deleted successfully %o", deletedPhoto);
+    res.send({
+      status: "success",
+      data: null,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "error",
+      message: "Exception thrown in database when deleting a photo.",
+    });
+  }
 };
 
 module.exports = {

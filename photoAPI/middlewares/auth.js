@@ -4,14 +4,13 @@
 
 const debug = require("debug")("books:auth");
 const jwt = require("jsonwebtoken");
-const { User } = require("../models");
 
 /**
  * Validate JWT Token
  */
-const validateJwtToken = (req, res) => {
+const validateJwtToken = (req, res, next) => {
   // make sure authorization header exists, otherwise bail
-  if (!req) {
+  if (!req.headers.authorization) {
     debug("Autorization header missing");
 
     return res.status(401).send({
@@ -21,7 +20,7 @@ const validateJwtToken = (req, res) => {
   }
 
   // split authorization header into "authSchema token"
-  const [authSchema, token] = req.split(" ");
+  const [authSchema, token] = req.headers.authorization.split(" ");
   if (authSchema.toLowerCase() !== "bearer") {
     return res.status(401).send({
       status: "fail",
@@ -32,13 +31,14 @@ const validateJwtToken = (req, res) => {
   // verify token (and extract payload)
   try {
     const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    return user;
+    req.user = user;
   } catch (error) {
     return res.status(401).send({
       status: "fail",
-      data: error,
+      data: "Authorization failed",
     });
   }
+  next();
 };
 
 module.exports = {

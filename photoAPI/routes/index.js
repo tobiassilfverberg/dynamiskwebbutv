@@ -2,12 +2,11 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/auth_controller");
 const userValidation = require("../validation/user");
-const validateJwt = require("../middlewares/auth");
+const auth = require("../middlewares/auth");
 
 // Resten av routes
-// router.use("/albums", require("./albums"));
-router.use("/photos", require("./photos"));
-// router.use("/users", require("./users"));
+router.use("/albums", auth.validateJwtToken, require("./albums"));
+router.use("/photos", auth.validateJwtToken, require("./photos"));
 
 // POST a user (register new)
 router.post("/register", userValidation.createUser, authController.register);
@@ -17,8 +16,5 @@ router.post("/login", authController.login);
 
 // Get new access token for user
 router.post("/refresh", authController.refresh);
-
-// Make sure access token is checked for every other request
-// router.use(validateJwt.validateJwtToken);
 
 module.exports = router;
