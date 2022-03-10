@@ -72,7 +72,7 @@ const upload = async (req, res) => {
 
   // get only the validated data from the request
   const validData = matchedData(req);
-  validData.user_id = user.user_id;
+  validData.user_id = user.id;
 
   try {
     const result = await new models.Photo(validData).save();
