@@ -90,18 +90,74 @@ const upload = async (req, res) => {
 };
 
 // Update album
-const update = async (req, res) => {};
+const update = async (req, res) => {
+  // find album
+  const album = await new models.Album({ id: req.params.albumId }).fetch({
+    require: false,
+  });
+  console.log(album);
+
+  // make sure this photo exists on user
+  const user = await models.User.fetchById(req.user.user_id, {
+    withRelated: ["albums"],
+  });
+
+  // deny if not
+  if (!album.get("user_id") === user.id) {
+    debug("You don´t have access to this album. %o", {
+      id: req.params.albumId,
+    });
+    return res.status(403).send({
+      status: "fail",
+      data: "Update failed. You don't have access to this album",
+    });
+  }
+
+  if (!album) {
+    debug("Album to update was not found. %o", { id: albumId });
+    res.status(404).send({
+      status: "fail",
+      data: "Album Not Found",
+    });
+    return;
+  }
+
+  // check for any validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).send({ status: "fail", data: errors.array() });
+  }
+
+  // get only the validated data from the request
+  const validData = matchedData(req);
+
+  try {
+    const updatedAlbum = await album.save(validData);
+    debug("Updated Album successfully: %O", updatedAlbum);
+
+    res.send({
+      status: "success",
+      data: updatedAlbum,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: "error",
+      message: "Exception thrown in database when updating an album.",
+    });
+    throw error;
+  }
+};
 
 // Upload photo to album
 const uploadPhoto = async (req, res) => {};
 
-// Upload multiple photos to album
+// Upload multiple photos to album VG
 const uploadManyPhotos = async (req, res) => {};
 
-// Delete one photo from album
+// Delete one photo from album VG
 const destroyPhoto = async (req, res) => {};
 
-// Delete entire album
+// Delete entire album VG
 const destroy = async (req, res) => {};
 
 module.exports = {
