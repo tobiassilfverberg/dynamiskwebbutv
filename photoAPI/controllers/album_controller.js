@@ -58,9 +58,9 @@ const get = async (req, res) => {
 // Create album
 const upload = async (req, res) => {
   // get validated user
-  // const user = await models.User.fetchById(req.user.user_id, {
-  //   withRelated: ["albums"],
-  // });
+  const user = await models.User.fetchById(req.user.user_id, {
+    withRelated: ["albums"],
+  });
 
   // check for any validation errors
   const errors = validationResult(req);
@@ -70,8 +70,7 @@ const upload = async (req, res) => {
 
   // get only the validated data from the request
   const validData = matchedData(req);
-  validData.user_id = req.user.user_id;
-  console.log(validData);
+  validData.user_id = user.id;
 
   try {
     const result = await new models.Album(validData).save();
